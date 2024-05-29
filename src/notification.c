@@ -398,7 +398,7 @@ yad_notification_run ()
         gtk_status_icon_set_tooltip_text (status_icon, options.data.dialog_text);
     }
   else
-    gtk_status_icon_set_tooltip_text (status_icon, _("Yad notification"));
+    gtk_status_icon_set_tooltip_text (status_icon, _("PortProton"));
   G_GNUC_END_IGNORE_DEPRECATIONS;
 
   if (options.data.dialog_image)
