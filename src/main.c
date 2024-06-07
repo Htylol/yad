@@ -732,7 +732,7 @@ main (gint argc, gchar ** argv)
 #endif
 
   gtk_init (&argc, &argv);
-  g_set_application_name ("YAD");
+  g_set_application_name ("PortProton");
 
 #ifndef STANDALONE
   settings = g_settings_new ("yad.settings");
