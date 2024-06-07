@@ -294,7 +294,7 @@ msgid "Don't show buttons"
 msgstr "Non mostrare i bottoni"
 
 #: ../src/option.c:159
-msgid "Set buttons layout type (spread, edge, start, end or center)"
+msgid "Set buttons layout type (spread, edge, start, end, center or expand)"
 msgstr ""
 "Seleziona il tipo di layout dei bottoni (diffusi, all' angolo, all'inizio, "
 "alla fine o centrati)"

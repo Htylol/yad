@@ -126,7 +126,7 @@ static GOptionEntry general_options[] = {
   { "no-buttons", 0, 0, G_OPTION_ARG_NONE, &options.data.no_buttons,
     N_("Don't show buttons"), NULL },
   { "buttons-layout", 0, 0, G_OPTION_ARG_CALLBACK, set_buttons_layout,
-    N_("Set buttons layout type (spread, edge, start, end or center)"), N_("TYPE") },
+    N_("Set buttons layout type (spread, edge, start, end, center or expand)"), N_("TYPE") },
   { "no-markup", 0, 0, G_OPTION_ARG_NONE, &options.data.no_markup,
     N_("Don't use pango markup language in dialog's text"), NULL },
   { "no-escape", 0, 0, G_OPTION_ARG_NONE, &options.data.no_escape,
@@ -1085,6 +1085,8 @@ set_buttons_layout (const gchar * option_name, const gchar * value, gpointer dat
     options.data.buttons_layout = GTK_BUTTONBOX_END;
   else if (strcasecmp (value, "center") == 0)
     options.data.buttons_layout = GTK_BUTTONBOX_CENTER;
+  else if (strcasecmp (value, "expand") == 0)
+    options.data.buttons_layout = GTK_BUTTONBOX_EXPAND;
   else
     g_printerr (_("Unknown buttons layout type: %s\n"), value);
 

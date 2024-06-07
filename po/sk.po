@@ -290,7 +290,7 @@ msgid "Don't show buttons"
 msgstr "Nezobrazuje tlačidlá"
 
 #: ../src/option.c:159
-msgid "Set buttons layout type (spread, edge, start, end or center)"
+msgid "Set buttons layout type (spread, edge, start, end, center or expand)"
 msgstr "Nastaví typ vzhľadu tlačidiel (spread, edge, start, end alebo center)"
 
 #: ../src/option.c:165

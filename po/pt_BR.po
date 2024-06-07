@@ -326,8 +326,8 @@ msgid "Don't show buttons"
 msgstr "Não mostrar botões"
 
 #: ../src/option.c:116
-msgid "Set buttons layout type (spread, edge, start, end or center)"
-msgstr "Definir o tipo de layout do botão (spread, edge, start, end ou center)"
+msgid "Set buttons layout type (spread, edge, start, end, center or expand)"
+msgstr "Definir o tipo de layout do botão (spread, edge, start, center, end ou expand)"
 
 #: ../src/option.c:118
 msgid "Don't use pango markup language in dialog's text"
