@@ -115,6 +115,8 @@ static GOptionEntry general_options[] = {
     N_("Set the dialog text alignment (left, center, right, fill)"), N_("TYPE") },
   { "image", 0, G_OPTION_FLAG_NOALIAS, G_OPTION_ARG_FILENAME, &options.data.dialog_image,
     N_("Set the dialog image"), N_("IMAGE") },
+  { "image-on-top", 0, G_OPTION_FLAG_NOALIAS, G_OPTION_ARG_NONE, &options.data.image_on_top,
+    N_("Show image above main widget"), NULL },
   { "icon-theme", 0, G_OPTION_FLAG_NOALIAS, G_OPTION_ARG_STRING, &options.data.icon_theme,
     N_("Use specified icon theme instead of default"), N_("THEME") },
   { "expander", 0, G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_CALLBACK, set_expander,
@@ -1603,6 +1605,7 @@ yad_options_init (void)
   options.data.text_width = 0;
   options.data.text_align = GTK_JUSTIFY_LEFT;
   options.data.dialog_image = NULL;
+  options.data.image_on_top = FALSE;
   options.data.icon_theme = NULL;
   options.data.expander = NULL;
   options.data.timeout = 0;
