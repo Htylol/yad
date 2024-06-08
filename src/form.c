@@ -360,6 +360,8 @@ set_field_value (guint num, gchar *value)
 
     case YAD_FIELD_BUTTON:
     case YAD_FIELD_FULL_BUTTON:
+    case YAD_FIELD_CENTER_BUTTON:
+    case YAD_FIELD_CENTER_FULL_BUTTON:
       g_object_set_data_full (G_OBJECT (w), "cmd", g_strdup (value), g_free);
       break;
 
@@ -862,7 +864,9 @@ form_create_widget (GtkWidget * dlg)
           /* add field label */
           l = NULL;
           if (fld->type != YAD_FIELD_CHECK && fld->type != YAD_FIELD_BUTTON &&
+              fld->type != YAD_FIELD_CHECK && fld->type != YAD_FIELD_CENTER_BUTTON &&
               fld->type != YAD_FIELD_FULL_BUTTON && fld->type != YAD_FIELD_LINK &&
+              fld->type != YAD_FIELD_CENTER_FULL_BUTTON && fld->type != YAD_FIELD_LINK &&
               fld->type != YAD_FIELD_LABEL && fld->type != YAD_FIELD_TEXT)
             {
               gchar *buf;
@@ -1211,6 +1215,8 @@ form_create_widget (GtkWidget * dlg)
 
             case YAD_FIELD_BUTTON:
             case YAD_FIELD_FULL_BUTTON:
+            case YAD_FIELD_CENTER_BUTTON:
+            case YAD_FIELD_CENTER_FULL_BUTTON:
               e = gtk_button_new ();
               gtk_widget_set_name (e, "yad-form-button");
               if (fld->tip)
@@ -1223,9 +1229,11 @@ form_create_widget (GtkWidget * dlg)
               g_signal_connect (G_OBJECT (e), "clicked", G_CALLBACK (button_clicked_cb), NULL);
               l = get_label (fld->name, 2, e);
               gtk_container_add (GTK_CONTAINER (e), l);
-              if (options.form_data.align_buttons)
+              if (options.form_data.align_buttons && fld->type == YAD_FIELD_BUTTON)
                 gtk_widget_set_halign (l, options.common_data.align);
-              if (fld->type == YAD_FIELD_BUTTON)
+              if (options.form_data.align_buttons && fld->type == YAD_FIELD_FULL_BUTTON)
+                gtk_widget_set_halign (l, options.common_data.align);
+              if (fld->type == YAD_FIELD_BUTTON || fld->type == YAD_FIELD_CENTER_BUTTON)
                 gtk_button_set_relief (GTK_BUTTON (e), GTK_RELIEF_NONE);
               gtk_grid_attach (GTK_GRID (tbl), e, col * 2, row, 2, 1);
               gtk_widget_set_hexpand (e, TRUE);
@@ -1547,6 +1555,8 @@ form_print_field (guint fn)
       break;
     case YAD_FIELD_BUTTON:
     case YAD_FIELD_FULL_BUTTON:
+    case YAD_FIELD_CENTER_BUTTON:
+    case YAD_FIELD_CENTER_FULL_BUTTON:
     case YAD_FIELD_LABEL:
       if (options.common_data.quoted_output)
         g_printf ("''%s", options.common_data.separator);
