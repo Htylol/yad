@@ -840,8 +840,8 @@ form_create_widget (GtkWidget * dlg)
       gtk_grid_set_row_spacing (GTK_GRID (tbl), 5);
       gtk_grid_set_column_spacing (GTK_GRID (tbl), 5);
 
-      gtk_grid_set_row_homogeneous (GTK_GRID (tbl), options.form_data.homogeneous);
-      gtk_grid_set_column_homogeneous (GTK_GRID (tbl), options.form_data.homogeneous);
+      gtk_grid_set_row_homogeneous (GTK_GRID (tbl), options.form_data.homogeneous_row);
+      gtk_grid_set_column_homogeneous (GTK_GRID (tbl), options.form_data.homogeneous_column);
 
       if (options.common_data.scroll)
         {

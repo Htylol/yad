@@ -387,7 +387,9 @@ static GOptionEntry form_options[] = {
     N_("Set alignment of filed labels (left, center or right)"), N_("TYPE") },
   { "columns", 0, 0, G_OPTION_ARG_INT, &options.form_data.columns,
     N_("Set number of columns in form"), N_("NUMBER") },
-  { "homogeneous", 0, 0, G_OPTION_ARG_NONE, &options.form_data.homogeneous,
+  { "homogeneous-row", 0, 0, G_OPTION_ARG_NONE, &options.form_data.homogeneous_row,
+    N_("Make form fields height and columns width the same size"), NULL },
+  { "homogeneous-column", 0, 0, G_OPTION_ARG_NONE, &options.form_data.homogeneous_column,
     N_("Make form fields height and columns width the same size"), NULL },
   { "output-by-row", 0, 0, G_OPTION_ARG_NONE, &options.form_data.output_by_row,
     N_("Order output fields by rows"), NULL },
@@ -1764,7 +1766,8 @@ yad_options_init (void)
   options.form_data.cycle_read = FALSE;
   options.form_data.align_buttons = FALSE;
   options.form_data.changed_action = NULL;
-  options.form_data.homogeneous = FALSE;
+  options.form_data.homogeneous_row = FALSE;
+  options.form_data.homogeneous_column = FALSE;
 
 #ifdef HAVE_HTML
   /* Initialize html data */
