@@ -161,7 +161,7 @@ If \fIID\fP have a non-numeric value it treats as a command and click on such bu
 Don't show buttons.
 .TP
 .B \-\-buttons-layout=\fITYPE\fP
-Set buttons layout type. Possible types are: \fIspread\fP, \fIedge\fP, \fIstart\fP, \fIend\fP or \fIcenter\fP.
+Set buttons layout type. Possible types are: \fIspread\fP, \fIedge\fP, \fIstart\fP, \fIend\fP, \fIcenter\fP or \fIexpand\fP.
 Default is \fIend\fP.
 .TP
 .B \-\-no-markup
@@ -599,8 +599,11 @@ Use specific type for extended completion. \fITYPE\fP can be \fIany\fP for match
 .B \-\-scroll
 Make form scrollable.
 .TP
-.B \-\-homogeneous
-Makes form fields height ans columns width the same size.
+.B \-\-homogeneous-row
+Makes form fields height the same size.
+.TP
+.B \-\-homogeneous-column
+Makes form columns width the same size.
 .TP
 .B \-\-changed-action=\fICMD\fP
 Run \fICMD\fP when \fICHK\fP, \fICB\fP, or \fISW\fP field value is changed. Command runs with two arguments - number of changed field and its current value.
