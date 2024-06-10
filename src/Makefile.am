@@ -8,12 +8,12 @@ endif
 
 CPICKER_SOURCES = cpicker.c cpicker.h
 
-yad_SOURCES = 		\
+yad_SOURCES = 			\
 	about.c			\
 	app.c			\
 	calendar.c		\
 	color.c			\
-	dnd.c           \
+	dnd.c           	\
 	entry.c			\
 	file.c			\
 	font.c			\
@@ -23,15 +23,16 @@ yad_SOURCES = 		\
 	notebook.c		\
 	option.c		\
 	paned.c			\
-	picture.c       \
+	picture.c       	\
 	print.c			\
 	progress.c		\
+	progress_old.c		\
 	scale.c			\
 	text.c			\
 	util.c			\
 	main.c			\
 	yad.h			\
-	calendar.xpm	\
+	calendar.xpm		\
 	$(CPICKER_SOURCES)
 
 if TRAY

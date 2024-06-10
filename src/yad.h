@@ -90,6 +90,7 @@ typedef enum {
   YAD_MODE_PICTURE,
   YAD_MODE_PRINT,
   YAD_MODE_PROGRESS,
+  YAD_MODE_PROGRESS_OLD,
   YAD_MODE_SCALE,
   YAD_MODE_TEXTINFO,
   YAD_MODE_ABOUT,
@@ -457,6 +458,7 @@ typedef struct {
 #ifndef G_OS_WIN32
   gboolean autokill;
 #endif
+  guint percentage;
   gboolean rtl;
   gchar *log;
   gboolean log_expanded;
@@ -590,6 +592,9 @@ typedef struct {
   gchar *css;
   gchar *gtkrc_file;
 
+  GtkPolicyType hscroll_policy;
+  GtkPolicyType vscroll_policy;
+
   gchar *rest_file;
   gchar **extra_data;
 
@@ -676,6 +681,7 @@ GtkWidget *notebook_create_widget (GtkWidget *dlg);
 GtkWidget *paned_create_widget (GtkWidget *dlg);
 GtkWidget *picture_create_widget (GtkWidget *dlg);
 GtkWidget *progress_create_widget (GtkWidget *dlg);
+GtkWidget *progress_create_widget_old (GtkWidget *dlg);
 GtkWidget *scale_create_widget (GtkWidget *dlg);
 GtkWidget *text_create_widget (GtkWidget *dlg);
 

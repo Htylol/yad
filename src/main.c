@@ -304,6 +304,9 @@ create_layout (GtkWidget *dlg)
     case YAD_MODE_PROGRESS:
       mw = progress_create_widget (dlg);
       break;
+    case YAD_MODE_PROGRESS_OLD:
+      mw = progress_create_widget_old (dlg);
+      break;
     case YAD_MODE_SCALE:
       mw = scale_create_widget (dlg);
       break;
@@ -578,7 +581,7 @@ create_dialog (void)
         }
       else
         {
-          if (options.mode == YAD_MODE_PROGRESS || options.mode == YAD_MODE_DND || options.mode == YAD_MODE_PICTURE)
+          if (options.mode == YAD_MODE_PROGRESS || options.mode == YAD_MODE_PROGRESS_OLD || options.mode == YAD_MODE_DND || options.mode == YAD_MODE_PICTURE)
             {
               /* add close button */
               btn = gtk_button_new ();
@@ -988,6 +991,8 @@ main (gint argc, gchar ** argv)
       if (!options.kill_parent)
         {
           if (options.mode == YAD_MODE_PROGRESS && options.progress_data.autokill && ret != YAD_RESPONSE_OK)
+            kill (getppid (), SIGHUP);
+          if (options.mode == YAD_MODE_PROGRESS_OLD && options.progress_data.autokill && ret != YAD_RESPONSE_OK)
             kill (getppid (), SIGHUP);
         }
 #endif

@@ -85,6 +85,7 @@ static gboolean paned_mode = FALSE;
 static gboolean picture_mode = FALSE;
 static gboolean print_mode = FALSE;
 static gboolean progress_mode = FALSE;
+static gboolean progress_mode_old = FALSE;
 static gboolean scale_mode = FALSE;
 static gboolean text_mode = FALSE;
 
@@ -604,6 +605,37 @@ static GOptionEntry progress_options[] = {
     N_("Set progress text"), N_("TEXT") },
   { "hide-text", 0, G_OPTION_FLAG_NOALIAS, G_OPTION_ARG_NONE, &options.common_data.hide_text,
     N_("Hide text on progress bar"), NULL },
+  { "pulsate", 0, 0, G_OPTION_ARG_NONE, &options.progress_data.pulsate,
+    N_("Pulsate progress bar"), NULL },
+  { "auto-close", 0, G_OPTION_FLAG_NOALIAS, G_OPTION_ARG_NONE, &options.progress_data.autoclose,
+    /* xgettext: no-c-format */
+    N_("Dismiss the dialog when 100% has been reached"), NULL },
+#ifndef G_OS_WIN32
+  { "auto-kill", 0, G_OPTION_FLAG_NOALIAS, G_OPTION_ARG_NONE, &options.progress_data.autokill,
+    N_("Kill parent process if cancel button is pressed"), NULL },
+#endif
+  { "rtl", 0, 0, G_OPTION_ARG_NONE, &options.progress_data.rtl,
+    N_("Right-To-Left progress bar direction"), NULL },
+  { "enable-log", 0, G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_CALLBACK, set_progress_log,
+    N_("Show log window"), N_("[TEXT]") },
+  { "log-expanded", 0, 0, G_OPTION_ARG_NONE, &options.progress_data.log_expanded,
+    N_("Expand log window"), NULL },
+  { "log-on-top", 0, 0, G_OPTION_ARG_NONE, &options.progress_data.log_on_top,
+    N_("Place log window above progress bar"), NULL },
+  { "log-height", 0, 0, G_OPTION_ARG_INT, &options.progress_data.log_height,
+    N_("Height of log window"), NULL },
+  { NULL }
+};
+
+static GOptionEntry progress_options_old[] = {
+  { "progress-old", 0, G_OPTION_FLAG_IN_MAIN, G_OPTION_ARG_NONE, &progress_mode_old,
+    N_("Display progress indication dialog"), NULL },
+  { "progress-text", 0, 0, G_OPTION_ARG_STRING, &options.progress_data.progress_text,
+    N_("Set progress text"), N_("TEXT") },
+  { "hide-text", 0, G_OPTION_FLAG_NOALIAS, G_OPTION_ARG_NONE, &options.common_data.hide_text,
+    N_("Hide text on progress bar"), NULL },
+  { "percentage", 0, 0, G_OPTION_ARG_INT, &options.progress_data.percentage,
+    N_("Set initial percentage"), N_("PERCENTAGE") },
   { "pulsate", 0, 0, G_OPTION_ARG_NONE, &options.progress_data.pulsate,
     N_("Pulsate progress bar"), NULL },
   { "auto-close", 0, G_OPTION_FLAG_NOALIAS, G_OPTION_ARG_NONE, &options.progress_data.autoclose,
@@ -1558,6 +1590,8 @@ yad_set_mode (void)
     options.mode = YAD_MODE_PRINT;
   else if (progress_mode)
     options.mode = YAD_MODE_PROGRESS;
+  else if (progress_mode_old)
+    options.mode = YAD_MODE_PROGRESS_OLD;
   else if (scale_mode)
     options.mode = YAD_MODE_SCALE;
   else if (text_mode)
@@ -2077,6 +2111,12 @@ yad_create_context (void)
   /* Adds progress option entries */
   a_group = g_option_group_new ("progress", _("Progress options"), _("Show progress options"), NULL, NULL);
   g_option_group_add_entries (a_group, progress_options);
+  g_option_group_set_translation_domain (a_group, GETTEXT_PACKAGE);
+  g_option_context_add_group (tmp_ctx, a_group);
+
+   /* Adds progress option entries */
+  a_group = g_option_group_new ("progress-old", _("Progress options"), _("Show progress options"), NULL, NULL);
+  g_option_group_add_entries (a_group, progress_options_old);
   g_option_group_set_translation_domain (a_group, GETTEXT_PACKAGE);
   g_option_context_add_group (tmp_ctx, a_group);
 

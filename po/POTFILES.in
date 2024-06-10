@@ -16,6 +16,7 @@ src/paned.c
 src/picture.c
 src/print.c
 src/progress.c
+src/progress_old.c
 src/color.c
 src/text.c
 src/notebook.c
