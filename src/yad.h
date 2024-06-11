@@ -198,6 +198,13 @@ typedef enum {
   YAD_WINDOW_SPLASH,
 } YadWindowType;
 
+typedef enum {
+  YAD_GUI_NORMAL = 0,
+  YAD_GUI_START,
+  YAD_GUI_START_OLD,
+  YAD_GUI_DIALOG,
+} YadGuiType;
+
 typedef struct {
   gchar *name;
   gchar *cmd;
@@ -248,7 +255,7 @@ typedef struct {
   guint text_width;
   GtkJustification text_align;
   gchar *dialog_image;
-  gboolean image_on_top;
+  YadGuiType gui_type;
   gchar *icon_theme;
   gchar *expander;
   gint borders;

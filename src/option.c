@@ -90,6 +90,21 @@ static gboolean progress_mode_old = FALSE;
 static gboolean scale_mode = FALSE;
 static gboolean text_mode = FALSE;
 
+static gboolean
+set_gui_type (const gchar * option_name, const gchar * value, gpointer data, GError ** err)
+{
+  if (strcasecmp (value, "start") == 0)
+    options.data.gui_type = YAD_GUI_START;
+  else if (strcasecmp (value, "start-old") == 0)
+    options.data.gui_type = YAD_GUI_START_OLD;
+  else if (strcasecmp (value, "dialog") == 0)
+    options.data.gui_type = YAD_GUI_DIALOG;
+  else
+    g_printerr (_("Unknown gui type: %s\n"), value);
+
+  return TRUE;
+}
+
 static GOptionEntry general_options[] = {
   { "title", 0, 0, G_OPTION_ARG_STRING, &options.data.dialog_title,
     N_("Set the dialog title"), N_("TITLE") },
@@ -117,8 +132,8 @@ static GOptionEntry general_options[] = {
     N_("Set the dialog text alignment (left, center, right, fill)"), N_("TYPE") },
   { "image", 0, G_OPTION_FLAG_NOALIAS, G_OPTION_ARG_FILENAME, &options.data.dialog_image,
     N_("Set the dialog image"), N_("IMAGE") },
-  { "image-on-top", 0, G_OPTION_FLAG_NOALIAS, G_OPTION_ARG_NONE, &options.data.image_on_top,
-    N_("Show image above main widget"), NULL },
+  { "gui-type", 0, 0, G_OPTION_ARG_CALLBACK, set_gui_type,
+    N_("Specify the gui type"), N_("start|start-old|dialog") },
   { "icon-theme", 0, G_OPTION_FLAG_NOALIAS, G_OPTION_ARG_STRING, &options.data.icon_theme,
     N_("Use specified icon theme instead of default"), N_("THEME") },
   { "expander", 0, G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_CALLBACK, set_expander,
@@ -1665,7 +1680,7 @@ yad_options_init (void)
   options.data.text_width = 0;
   options.data.text_align = GTK_JUSTIFY_LEFT;
   options.data.dialog_image = NULL;
-  options.data.image_on_top = FALSE;
+  options.data.gui_type = YAD_GUI_NORMAL;
   options.data.icon_theme = NULL;
   options.data.expander = NULL;
   options.data.timeout = 0;
