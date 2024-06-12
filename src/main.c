@@ -329,6 +329,7 @@ create_layout (GtkWidget *dlg)
   /* create layout */
   switch (options.data.gui_type)
     {
+      case YAD_GUI_UNSET:
       case YAD_GUI_NORMAL:
         layout = gtk_box_new (GTK_ORIENTATION_VERTICAL, 5);
         box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 5);
@@ -381,6 +382,18 @@ create_layout (GtkWidget *dlg)
           gtk_box_pack_start (GTK_BOX (layout), box, TRUE, FALSE, 0);
         if (imw)
           gtk_box_pack_start (GTK_BOX (box), imw, TRUE, TRUE, 0);
+        break;
+      case YAD_GUI_SETTINGS:
+        layout = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 5);
+        box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 5);
+
+        if (image)
+          gtk_box_pack_start (GTK_BOX (box), image, TRUE, TRUE, 0);
+        if (text)
+          gtk_box_pack_start (GTK_BOX (box), text, TRUE, TRUE, 0);
+          gtk_box_pack_start (GTK_BOX (layout), box, TRUE, TRUE, options.data.gui_type_width);
+        if (imw)
+          gtk_box_pack_start (GTK_BOX (box), imw, TRUE, TRUE, options.data.gui_type_height);
         break;
     }
 

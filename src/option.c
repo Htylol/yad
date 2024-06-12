@@ -93,12 +93,16 @@ static gboolean text_mode = FALSE;
 static gboolean
 set_gui_type (const gchar * option_name, const gchar * value, gpointer data, GError ** err)
 {
-  if (strcasecmp (value, "start") == 0)
+  if (strcasecmp (value, "normal") == 0)
+    options.data.gui_type = YAD_GUI_NORMAL;
+  else if (strcasecmp (value, "start") == 0)
     options.data.gui_type = YAD_GUI_START;
   else if (strcasecmp (value, "start-old") == 0)
     options.data.gui_type = YAD_GUI_START_OLD;
   else if (strcasecmp (value, "dialog") == 0)
     options.data.gui_type = YAD_GUI_DIALOG;
+  else if (strcasecmp (value, "settings") == 0)
+    options.data.gui_type = YAD_GUI_SETTINGS;
   else
     g_printerr (_("Unknown gui type: %s\n"), value);
 
@@ -114,6 +118,10 @@ static GOptionEntry general_options[] = {
     N_("Set the window width"), N_("WIDTH") },
   { "height", 0, 0, G_OPTION_ARG_INT, &options.data.height,
     N_("Set the window height"), N_("HEIGHT") },
+  { "gui-type-width", 0, 0, G_OPTION_ARG_INT, &options.data.gui_type_width,
+    N_("Set type gui width"), N_("GUI_TYPE_WIDTH") },
+  { "gui-type-height", 0, 0, G_OPTION_ARG_INT, &options.data.gui_type_height,
+    N_("Set type gui height"), N_("GUI_TYPE_HEIGHT") },
   { "posx", 0, 0, G_OPTION_ARG_CALLBACK, set_posx,
     N_("Set the X position of a window"), N_("NUMBER") },
   { "posy", 0, 0, G_OPTION_ARG_CALLBACK, set_posy,
@@ -1666,8 +1674,11 @@ yad_options_init (void)
 #ifndef STANDALONE
   options.data.width = g_settings_get_int (settings, "width");
   options.data.height = g_settings_get_int (settings, "height");
+  options.data.gui_type_width = g_settings_get_int (settings, "gui_type_width");
+  options.data.gui_type_height = g_settings_get_int (settings, "gui_type_height");
 #else
   options.data.width = options.data.height = -1;
+  options.data.gui_type_width = options.data.gui_type_height = 0;
 #endif
   options.data.use_posx = FALSE;
   options.data.posx = 0;
@@ -1680,7 +1691,7 @@ yad_options_init (void)
   options.data.text_width = 0;
   options.data.text_align = GTK_JUSTIFY_LEFT;
   options.data.dialog_image = NULL;
-  options.data.gui_type = YAD_GUI_NORMAL;
+  options.data.gui_type = YAD_GUI_UNSET;
   options.data.icon_theme = NULL;
   options.data.expander = NULL;
   options.data.timeout = 0;

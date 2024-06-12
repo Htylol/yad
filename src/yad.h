@@ -199,9 +199,11 @@ typedef enum {
 } YadWindowType;
 
 typedef enum {
-  YAD_GUI_NORMAL = 0,
+  YAD_GUI_UNSET = 0,
+  YAD_GUI_NORMAL,
   YAD_GUI_START,
   YAD_GUI_START_OLD,
+  YAD_GUI_SETTINGS,
   YAD_GUI_DIALOG,
 } YadGuiType;
 
@@ -242,6 +244,8 @@ typedef struct {
   gchar *window_icon;
   gint width;
   gint height;
+  gint gui_type_width;
+  gint gui_type_height;
   gboolean use_posx;
   gint posx;
   gboolean negx;
