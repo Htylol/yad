@@ -51,11 +51,13 @@ paned_create_widget (GtkWidget * dlg)
 
   s = gtk_socket_new ();
   gtk_widget_set_can_focus (s, TRUE);
+  gtk_widget_set_sensitive (w, FALSE);
   gtk_paned_add1 (GTK_PANED (w), s);
   g_object_set_data (G_OBJECT (w), "s1", s);
 
   s = gtk_socket_new ();
   gtk_widget_set_can_focus (s, TRUE);
+  gtk_widget_set_sensitive (w, FALSE);
   gtk_paned_add2 (GTK_PANED (w), s);
   g_object_set_data (G_OBJECT (w), "s2", s);
 
