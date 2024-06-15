@@ -454,6 +454,7 @@ typedef struct {
 typedef struct {
   GtkOrientation orient;
   gint splitter;
+  gboolean sensitive;
   gint focused;
 } YadPanedData;
 

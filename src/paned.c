@@ -48,17 +48,18 @@ paned_create_widget (GtkWidget * dlg)
   /* create widget */
   paned = w = gtk_paned_new (options.paned_data.orient);
   gtk_widget_set_name (w, "yad-paned-widget");
+  gtk_widget_set_sensitive (w, options.paned_data.sensitive);
 
   s = gtk_socket_new ();
   gtk_widget_set_can_focus (s, TRUE);
-  gtk_widget_set_sensitive (w, FALSE);
-  gtk_paned_add1 (GTK_PANED (w), s);
+  gtk_paned_pack1 (GTK_PANED (w), s, TRUE, FALSE);
+  gtk_widget_set_size_request (s, -1, -1);
   g_object_set_data (G_OBJECT (w), "s1", s);
 
   s = gtk_socket_new ();
   gtk_widget_set_can_focus (s, TRUE);
-  gtk_widget_set_sensitive (w, FALSE);
-  gtk_paned_add2 (GTK_PANED (w), s);
+  gtk_paned_pack2 (GTK_PANED (w), s, FALSE, FALSE);
+  gtk_widget_set_size_request (s, -1, -1);
   g_object_set_data (G_OBJECT (w), "s2", s);
 
   return w;
