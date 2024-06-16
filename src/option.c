@@ -103,8 +103,8 @@ set_gui_type (const gchar * option_name, const gchar * value, gpointer data, GEr
     options.data.gui_type = YAD_GUI_SETTINGS_PANED;
   else if (strcasecmp (value, "settings-notebook") == 0)
     options.data.gui_type = YAD_GUI_SETTINGS_NOTEBOOK;
-  else if (strcasecmp (value, "settings-menu") == 0)
-    options.data.gui_type = YAD_GUI_SETTINGS_MENU;
+  else if (strcasecmp (value, "settings-base") == 0)
+    options.data.gui_type = YAD_GUI_SETTINGS_BASE;
   else
     g_printerr (_("Unknown gui type: %s\n"), value);
 
