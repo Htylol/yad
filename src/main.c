@@ -206,8 +206,8 @@ create_layout (GtkWidget *dlg)
         g_object_unref (pb);
 
       gtk_widget_set_name (image, "yad-dialog-image");
-      gtk_widget_set_halign (image, GTK_ALIGN_CENTER);
-      gtk_widget_set_valign (image, GTK_ALIGN_START);
+      gtk_widget_set_halign (image, options.data.image_halign);
+      gtk_widget_set_valign (image, options.data.image_valign);
     }
 
   /* create text label */
@@ -330,7 +330,6 @@ create_layout (GtkWidget *dlg)
   switch (options.data.gui_type)
     {
       case YAD_GUI_UNSET:
-      case YAD_GUI_NORMAL:
         layout = gtk_box_new (GTK_ORIENTATION_VERTICAL, 5);
         box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 5);
 

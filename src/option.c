@@ -57,7 +57,10 @@ static gboolean set_scroll_policy (const gchar *, const gchar *, gpointer, GErro
 static gboolean set_size_format (const gchar *, const gchar *, gpointer, GError **);
 #endif
 static gboolean set_interp (const gchar *, const gchar *, gpointer, GError **);
-static gboolean set_window_type (const gchar * option_name, const gchar * value, gpointer data, GError ** err);
+static gboolean set_window_type (const gchar *, const gchar *, gpointer, GError ** err);
+static gboolean set_gui_type (const gchar *, const gchar *, gpointer, GError ** err);
+static gboolean set_image_halign (const gchar *, const gchar *, gpointer, GError ** err);
+static gboolean set_image_valign (const gchar *, const gchar *, gpointer, GError ** err);
 #ifdef HAVE_SOURCEVIEW
 static gboolean set_right_margin (const gchar *, const gchar *, gpointer, GError **);
 static gboolean set_smart_homend (const gchar *, const gchar *, gpointer, GError **);
@@ -89,29 +92,6 @@ static gboolean progress_mode = FALSE;
 static gboolean progress_mode_old = FALSE;
 static gboolean scale_mode = FALSE;
 static gboolean text_mode = FALSE;
-
-static gboolean
-set_gui_type (const gchar * option_name, const gchar * value, gpointer data, GError ** err)
-{
-  if (strcasecmp (value, "normal") == 0)
-    options.data.gui_type = YAD_GUI_NORMAL;
-  else if (strcasecmp (value, "start") == 0)
-    options.data.gui_type = YAD_GUI_START;
-  else if (strcasecmp (value, "start-old") == 0)
-    options.data.gui_type = YAD_GUI_START_OLD;
-  else if (strcasecmp (value, "settings-paned") == 0)
-    options.data.gui_type = YAD_GUI_SETTINGS_PANED;
-  else if (strcasecmp (value, "settings-notebook") == 0)
-    options.data.gui_type = YAD_GUI_SETTINGS_NOTEBOOK;
-  else if (strcasecmp (value, "settings-base") == 0)
-    options.data.gui_type = YAD_GUI_SETTINGS_BASE;
-  else if (strcasecmp (value, "settings-shortcut") == 0)
-    options.data.gui_type = YAD_GUI_SETTINGS_SHORTCUT;
-  else
-    g_printerr (_("Unknown gui type: %s\n"), value);
-
-  return TRUE;
-}
 
 static GOptionEntry general_options[] = {
   { "title", 0, 0, G_OPTION_ARG_STRING, &options.data.dialog_title,
@@ -152,8 +132,6 @@ static GOptionEntry general_options[] = {
     N_("Set the dialog text alignment (left, center, right, fill)"), N_("TYPE") },
   { "image", 0, G_OPTION_FLAG_NOALIAS, G_OPTION_ARG_FILENAME, &options.data.dialog_image,
     N_("Set the dialog image"), N_("IMAGE") },
-  { "gui-type", 0, 0, G_OPTION_ARG_CALLBACK, set_gui_type,
-    N_("Specify the gui type"), N_("start|start-old|dialog") },
   { "icon-theme", 0, G_OPTION_FLAG_NOALIAS, G_OPTION_ARG_STRING, &options.data.icon_theme,
     N_("Use specified icon theme instead of default"), N_("THEME") },
   { "expander", 0, G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_CALLBACK, set_expander,
@@ -213,6 +191,12 @@ static GOptionEntry general_options[] = {
     N_("Open window as a splashscreen (DEPRECATED: use --window-type=splash instead)"), NULL },
   { "window-type", 0, 0, G_OPTION_ARG_CALLBACK, set_window_type,
     N_("Specify the window type for the dialog"), N_("normal|dialog|splash") },
+  { "gui-type", 0, 0, G_OPTION_ARG_CALLBACK, set_gui_type,
+    N_("Specify the gui type"), N_("start|start-old|settings-{paned,noteboke,shortcut,base}") },
+  { "image-halign", 0, 0, G_OPTION_ARG_CALLBACK, set_image_halign,
+    N_("Set halign for image (fill, start, end, center, baseline)"), N_("TYPE") },
+  { "image-valign", 0, 0, G_OPTION_ARG_CALLBACK, set_image_valign,
+    N_("Set halign for image (fill, start, end, center, baseline)"), N_("TYPE") },
   { "plug", 0, 0, G_OPTION_ARG_INT, &options.plug,
     N_("Special type of dialog for XEMBED"), N_("KEY") },
   { "tabnum", 0, 0, G_OPTION_ARG_INT, &options.tabnum,
@@ -1466,6 +1450,65 @@ set_window_type (const gchar * option_name, const gchar * value, gpointer data, 
   return TRUE;
 }
 
+static gboolean
+set_gui_type (const gchar * option_name, const gchar * value, gpointer data, GError ** err)
+{
+  if (strcasecmp (value, "start") == 0)
+    options.data.gui_type = YAD_GUI_START;
+  else if (strcasecmp (value, "start-old") == 0)
+    options.data.gui_type = YAD_GUI_START_OLD;
+  else if (strcasecmp (value, "settings-paned") == 0)
+    options.data.gui_type = YAD_GUI_SETTINGS_PANED;
+  else if (strcasecmp (value, "settings-notebook") == 0)
+    options.data.gui_type = YAD_GUI_SETTINGS_NOTEBOOK;
+  else if (strcasecmp (value, "settings-base") == 0)
+    options.data.gui_type = YAD_GUI_SETTINGS_BASE;
+  else if (strcasecmp (value, "settings-shortcut") == 0)
+    options.data.gui_type = YAD_GUI_SETTINGS_SHORTCUT;
+  else
+    g_printerr (_("Unknown gui type: %s\n"), value);
+
+  return TRUE;
+}
+
+static gboolean
+set_image_halign (const gchar * option_name, const gchar * value, gpointer data, GError ** err)
+{
+  if (strcasecmp (value, "fill") == 0)
+    options.data.image_halign = GTK_ALIGN_FILL;
+  else if (strcasecmp (value, "start") == 0)
+    options.data.image_halign = GTK_ALIGN_START;
+  else if (strcasecmp (value, "end") == 0)
+    options.data.image_halign = GTK_ALIGN_END;
+  else if (strcasecmp (value, "center") == 0)
+    options.data.image_halign = GTK_ALIGN_CENTER;
+  else if (strcasecmp (value, "baseline") == 0)
+    options.data.image_halign = GTK_ALIGN_BASELINE;
+  else
+    g_printerr (_("Unknown image halign type: %s\n"), value);
+
+  return TRUE;
+}
+
+static gboolean
+set_image_valign (const gchar * option_name, const gchar * value, gpointer data, GError ** err)
+{
+  if (strcasecmp (value, "fill") == 0)
+    options.data.image_valign = GTK_ALIGN_FILL;
+  else if (strcasecmp (value, "start") == 0)
+    options.data.image_valign = GTK_ALIGN_START;
+  else if (strcasecmp (value, "end") == 0)
+    options.data.image_valign = GTK_ALIGN_END;
+  else if (strcasecmp (value, "center") == 0)
+    options.data.image_valign = GTK_ALIGN_CENTER;
+  else if (strcasecmp (value, "baseline") == 0)
+    options.data.image_valign = GTK_ALIGN_BASELINE;
+  else
+    g_printerr (_("Unknown image valign type: %s\n"), value);
+
+  return TRUE;
+}
+
 #if HAVE_SOURCEVIEW
 static gboolean
 set_right_margin (const gchar * option_name, const gchar * value, gpointer data, GError ** err)
@@ -1690,9 +1733,9 @@ yad_options_init (void)
   options.data.height = g_settings_get_int (settings, "height");
   options.data.gui_type_width = g_settings_get_int (settings, "gui_type_width");
   options.data.gui_type_height = g_settings_get_int (settings, "gui_type_height");
-    options.data.gui_type_box = g_settings_get_int (settings, "gui_type_box");
+  options.data.gui_type_box = g_settings_get_int (settings, "gui_type_box");
   options.data.gui_type_layout = g_settings_get_int (settings, "gui_type_layout");
-    options.data.gui_type_text = g_settings_get_int (settings, "gui_type_text");
+  options.data.gui_type_text = g_settings_get_int (settings, "gui_type_text");
   options.data.gui_type_images = g_settings_get_int (settings, "gui_type_images");
 #else
   options.data.width = options.data.height = -1;
@@ -1711,7 +1754,6 @@ yad_options_init (void)
   options.data.text_width = 0;
   options.data.text_align = GTK_JUSTIFY_LEFT;
   options.data.dialog_image = NULL;
-  options.data.gui_type = YAD_GUI_UNSET;
   options.data.icon_theme = NULL;
   options.data.expander = NULL;
   options.data.timeout = 0;
@@ -1754,6 +1796,9 @@ yad_options_init (void)
   options.data.fullscreen = FALSE;
   options.data.splash = FALSE;
   options.data.window_type = YAD_WINDOW_UNSET;
+  options.data.gui_type = YAD_GUI_UNSET;
+  options.data.image_halign = GTK_ALIGN_CENTER;
+  options.data.image_valign = GTK_ALIGN_START;
   options.data.focus = TRUE;
   options.data.close_on_unfocus = FALSE;
 

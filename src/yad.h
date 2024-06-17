@@ -200,7 +200,6 @@ typedef enum {
 
 typedef enum {
   YAD_GUI_UNSET = 0,
-  YAD_GUI_NORMAL,
   YAD_GUI_START,
   YAD_GUI_START_OLD,
   YAD_GUI_SETTINGS_PANED,
@@ -265,7 +264,6 @@ typedef struct {
   guint text_width;
   GtkJustification text_align;
   gchar *dialog_image;
-  YadGuiType gui_type;
   gchar *icon_theme;
   gchar *expander;
   gint borders;
@@ -297,6 +295,9 @@ typedef struct {
   gboolean fullscreen;
   gboolean splash;
   YadWindowType window_type;
+  YadGuiType gui_type;
+  GtkAlign image_halign;
+  GtkAlign image_valign;
   gboolean focus;
   gboolean close_on_unfocus;
 } YadData;
