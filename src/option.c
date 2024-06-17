@@ -916,12 +916,14 @@ add_field (const gchar * option_name, const gchar * value, gpointer data, GError
         fld->type = YAD_FIELD_READ_ONLY;
       else if (strcasecmp (fstr[1], "NUM") == 0)
         fld->type = YAD_FIELD_NUM;
-      else if (strcasecmp (fstr[1], "CHK") == 0)
-        fld->type = YAD_FIELD_CHECK;
       else if (strcasecmp (fstr[1], "CB") == 0)
         fld->type = YAD_FIELD_COMBO;
       else if (strcasecmp (fstr[1], "CBE") == 0)
         fld->type = YAD_FIELD_COMBO_ENTRY;
+      else if (strcasecmp (fstr[1], "DCB") == 0)
+        fld->type = YAD_FIELD_DISABLE_COMBO;
+      else if (strcasecmp (fstr[1], "DCBE") == 0)
+        fld->type = YAD_FIELD_DISABLE_COMBO_ENTRY;
       else if (strcasecmp (fstr[1], "CE") == 0)
         fld->type = YAD_FIELD_COMPLETE;
       else if (strcasecmp (fstr[1], "FL") == 0)
@@ -948,8 +950,14 @@ add_field (const gchar * option_name, const gchar * value, gpointer data, GError
         fld->type = YAD_FIELD_DATE;
       else if (strcasecmp (fstr[1], "SCL") == 0)
         fld->type = YAD_FIELD_SCALE;
+      else if (strcasecmp (fstr[1], "CHK") == 0)
+        fld->type = YAD_FIELD_CHECK;
       else if (strcasecmp (fstr[1], "SW") == 0)
         fld->type = YAD_FIELD_SWITCH;
+      else if (strcasecmp (fstr[1], "DCHK") == 0)
+        fld->type = YAD_FIELD_DISABLE_CHECK;
+      else if (strcasecmp (fstr[1], "DSW") == 0)
+        fld->type = YAD_FIELD_DISABLE_SWITCH;
       else if (strcasecmp (fstr[1], "BTN") == 0)
         fld->type = YAD_FIELD_BUTTON;
       else if (strcasecmp (fstr[1], "FBTN") == 0)

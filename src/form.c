@@ -85,15 +85,19 @@ expand_action (gchar * cmd)
                     break;
                   }
                 case YAD_FIELD_CHECK:
+                case YAD_FIELD_DISABLE_CHECK:
                   arg = g_strdup (print_bool_val (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (g_slist_nth_data (fields, num)))));
                   break;
                 case YAD_FIELD_COMBO:
                 case YAD_FIELD_COMBO_ENTRY:
+                case YAD_FIELD_DISABLE_COMBO:
+                case YAD_FIELD_DISABLE_COMBO_ENTRY:
                   buf = gtk_combo_box_text_get_active_text (GTK_COMBO_BOX_TEXT (g_slist_nth_data (fields, num)));
                   arg = g_shell_quote (buf ? buf : "");
                   g_free (buf);
                   break;
                 case YAD_FIELD_SWITCH:
+                case YAD_FIELD_DISABLE_SWITCH:
                   arg = g_strdup (print_bool_val (gtk_switch_get_state (GTK_SWITCH (g_slist_nth_data (fields, num)))));
                   break;
                 case YAD_FIELD_SCALE:
@@ -250,6 +254,16 @@ set_field_value (guint num, gchar *value)
       gtk_switch_set_state (GTK_SWITCH (w), get_bool_val (value));
       break;
 
+    case YAD_FIELD_DISABLE_CHECK:
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (w), get_bool_val (value));
+      gtk_widget_set_sensitive (w, FALSE);
+      break;
+
+    case YAD_FIELD_DISABLE_SWITCH:
+      gtk_switch_set_state (GTK_SWITCH (w), get_bool_val (value));
+      gtk_widget_set_sensitive (w, FALSE);
+      break;
+
     case YAD_FIELD_COMPLETE:
       {
         GtkEntryCompletion *c;
@@ -310,6 +324,38 @@ set_field_value (guint num, gchar *value)
             i++;
           }
         gtk_combo_box_set_active (GTK_COMBO_BOX (w), def);
+        g_strfreev (s);
+        break;
+      }
+
+    case YAD_FIELD_DISABLE_COMBO:
+    case YAD_FIELD_DISABLE_COMBO_ENTRY:
+      {
+        GtkTreeModel *m;
+        gint i = 0, def = 0;
+
+        /* cleanup previous values */
+        m = gtk_combo_box_get_model (GTK_COMBO_BOX (w));
+        gtk_list_store_clear (GTK_LIST_STORE (m));
+
+        s = g_strsplit (value, options.common_data.item_separator, -1);
+        while (s[i])
+          {
+            gchar *buf;
+
+            if (s[i][0] == '^')
+              {
+                buf = g_strcompress (s[i] + 1);
+                def = i;
+              }
+            else
+              buf = g_strcompress (s[i]);
+            gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (w), buf);
+            g_free (buf);
+            i++;
+          }
+        gtk_combo_box_set_active (GTK_COMBO_BOX (w), def);
+        gtk_widget_set_sensitive (w, FALSE);
         g_strfreev (s);
         break;
       }
@@ -965,6 +1011,7 @@ form_create_widget (GtkWidget * dlg)
               break;
 
             case YAD_FIELD_CHECK:
+            case YAD_FIELD_DISABLE_CHECK:
               {
                 gchar *buf;
                 if (fld->name)
@@ -988,7 +1035,8 @@ form_create_widget (GtkWidget * dlg)
               }
               break;
 
-           case YAD_FIELD_SWITCH:
+            case YAD_FIELD_SWITCH:
+            case YAD_FIELD_DISABLE_SWITCH:
               {
                 e = gtk_switch_new ();
                 gtk_widget_set_name (e, "yad-form-switch");
@@ -1009,6 +1057,7 @@ form_create_widget (GtkWidget * dlg)
               break;
 
             case YAD_FIELD_COMBO:
+            case YAD_FIELD_DISABLE_COMBO:
               e = gtk_combo_box_text_new ();
               gtk_widget_set_name (e, "yad-form-combo");
               if (fld->tip)
@@ -1026,6 +1075,7 @@ form_create_widget (GtkWidget * dlg)
               break;
 
             case YAD_FIELD_COMBO_ENTRY:
+            case YAD_FIELD_DISABLE_COMBO_ENTRY:
               e = gtk_combo_box_text_new_with_entry ();
               gtk_widget_set_name (e, "yad-form-edit-combo");
               if (fld->tip)
@@ -1429,6 +1479,7 @@ form_print_field (guint fn)
         break;
       }
     case YAD_FIELD_CHECK:
+    case YAD_FIELD_DISABLE_CHECK:
       if (options.common_data.quoted_output)
         g_printf ("'%s'%s", print_bool_val (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (g_slist_nth_data (fields, fn)))),
                   options.common_data.separator);
@@ -1437,6 +1488,7 @@ form_print_field (guint fn)
                   options.common_data.separator);
       break;
     case YAD_FIELD_SWITCH:
+    case YAD_FIELD_DISABLE_SWITCH:
       if (options.common_data.quoted_output)
         g_printf ("'%s'%s", print_bool_val (gtk_switch_get_state (GTK_SWITCH (g_slist_nth_data (fields, fn)))),
                   options.common_data.separator);
@@ -1446,6 +1498,8 @@ form_print_field (guint fn)
       break;
     case YAD_FIELD_COMBO:
     case YAD_FIELD_COMBO_ENTRY:
+    case YAD_FIELD_DISABLE_COMBO:
+    case YAD_FIELD_DISABLE_COMBO_ENTRY:
       if (options.common_data.num_output && fld->type == YAD_FIELD_COMBO)
         g_printf ("%d%s", gtk_combo_box_get_active (GTK_COMBO_BOX (g_slist_nth_data (fields, fn))) + 1,
                   options.common_data.separator);
