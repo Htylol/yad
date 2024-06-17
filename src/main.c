@@ -348,27 +348,27 @@ create_layout (GtkWidget *dlg)
         }
         break;
       case YAD_GUI_START:
-        layout = gtk_box_new (GTK_ORIENTATION_VERTICAL, 5);
-        box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 5);
+        layout = gtk_box_new (GTK_ORIENTATION_VERTICAL, options.data.gui_type_layout);
+        box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, options.data.gui_type_box);
 
         if (text)
-          gtk_box_pack_start (GTK_BOX (layout), text, FALSE, FALSE, 2);
+          gtk_box_pack_start (GTK_BOX (layout), text, FALSE, FALSE, options.data.gui_type_text);
           gtk_box_pack_start (GTK_BOX (layout), box, FALSE, FALSE, 0);
         if (image)
-          gtk_box_pack_start (GTK_BOX (box), image, FALSE, FALSE, 2);
+          gtk_box_pack_start (GTK_BOX (box), image, FALSE, FALSE, options.data.gui_type_images);
         if (imw)
           gtk_box_pack_start (GTK_BOX (box), imw, TRUE, TRUE, 0);
         break;
       case YAD_GUI_START_OLD:
-        layout = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 5);
-        box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 5);
+        layout = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, options.data.gui_type_layout);
+        box = gtk_box_new (GTK_ORIENTATION_VERTICAL, options.data.gui_type_box);
 
         if (text)
-          gtk_box_pack_start (GTK_BOX (box), text, FALSE, FALSE, 2);
+          gtk_box_pack_start (GTK_BOX (box), text, FALSE, FALSE, options.data.gui_type_text);
         if (imw)
           gtk_box_pack_start (GTK_BOX (box), imw, TRUE, TRUE, 0);
         if (image)
-          gtk_box_pack_start (GTK_BOX (layout), image, FALSE, FALSE, 2);
+          gtk_box_pack_start (GTK_BOX (layout), image, FALSE, FALSE, options.data.gui_type_images);
           gtk_box_pack_start (GTK_BOX (layout), box, TRUE, TRUE, 0);
         break;
       case YAD_GUI_SETTINGS_PANED:
@@ -404,6 +404,18 @@ create_layout (GtkWidget *dlg)
         if (text)
           gtk_box_pack_start (GTK_BOX (layout), text, FALSE, FALSE, 2);
           gtk_box_pack_start (GTK_BOX (layout), box, FALSE, FALSE, options.data.gui_type_width);
+        if (imw)
+          gtk_box_pack_start (GTK_BOX (box), imw, TRUE, TRUE, options.data.gui_type_height);
+        break;
+      case YAD_GUI_SETTINGS_SHORTCUT:
+        layout = gtk_box_new (GTK_ORIENTATION_VERTICAL, 5);
+        box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 5);
+
+        if (text)
+          gtk_box_pack_start (GTK_BOX (layout), text, FALSE, FALSE, 2);
+          gtk_box_pack_start (GTK_BOX (layout), box, FALSE, FALSE, options.data.gui_type_width);
+        if (image)
+          gtk_box_pack_start (GTK_BOX (box), image, FALSE, FALSE, 2);
         if (imw)
           gtk_box_pack_start (GTK_BOX (box), imw, TRUE, TRUE, options.data.gui_type_height);
         break;

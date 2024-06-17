@@ -206,6 +206,7 @@ typedef enum {
   YAD_GUI_SETTINGS_PANED,
   YAD_GUI_SETTINGS_NOTEBOOK,
   YAD_GUI_SETTINGS_BASE,
+  YAD_GUI_SETTINGS_SHORTCUT,
 } YadGuiType;
 
 typedef struct {
@@ -247,6 +248,10 @@ typedef struct {
   gint height;
   gint gui_type_width;
   gint gui_type_height;
+  gint gui_type_box;
+  gint gui_type_layout;
+  gint gui_type_text;
+  gint gui_type_images;
   gboolean use_posx;
   gint posx;
   gboolean negx;

@@ -105,6 +105,8 @@ set_gui_type (const gchar * option_name, const gchar * value, gpointer data, GEr
     options.data.gui_type = YAD_GUI_SETTINGS_NOTEBOOK;
   else if (strcasecmp (value, "settings-base") == 0)
     options.data.gui_type = YAD_GUI_SETTINGS_BASE;
+  else if (strcasecmp (value, "settings-shortcut") == 0)
+    options.data.gui_type = YAD_GUI_SETTINGS_SHORTCUT;
   else
     g_printerr (_("Unknown gui type: %s\n"), value);
 
@@ -124,6 +126,14 @@ static GOptionEntry general_options[] = {
     N_("Set type gui width"), N_("GUI_TYPE_WIDTH") },
   { "gui-type-height", 0, 0, G_OPTION_ARG_INT, &options.data.gui_type_height,
     N_("Set type gui height"), N_("GUI_TYPE_HEIGHT") },
+  { "gui-type-box", 0, 0, G_OPTION_ARG_INT, &options.data.gui_type_box,
+    N_("Set type gui box"), N_("GUI_TYPE_WIDTH") },
+  { "gui-type-layout", 0, 0, G_OPTION_ARG_INT, &options.data.gui_type_layout,
+    N_("Set type gui layout"), N_("GUI_TYPE_HEIGHT") },
+  { "gui-type-text", 0, 0, G_OPTION_ARG_INT, &options.data.gui_type_text,
+    N_("Set type gui text"), N_("GUI_TYPE_WIDTH") },
+  { "gui-type-images", 0, 0, G_OPTION_ARG_INT, &options.data.gui_type_images,
+    N_("Set type gui images"), N_("GUI_TYPE_HEIGHT") },
   { "posx", 0, 0, G_OPTION_ARG_CALLBACK, set_posx,
     N_("Set the X position of a window"), N_("NUMBER") },
   { "posy", 0, 0, G_OPTION_ARG_CALLBACK, set_posy,
@@ -1680,9 +1690,15 @@ yad_options_init (void)
   options.data.height = g_settings_get_int (settings, "height");
   options.data.gui_type_width = g_settings_get_int (settings, "gui_type_width");
   options.data.gui_type_height = g_settings_get_int (settings, "gui_type_height");
+    options.data.gui_type_box = g_settings_get_int (settings, "gui_type_box");
+  options.data.gui_type_layout = g_settings_get_int (settings, "gui_type_layout");
+    options.data.gui_type_text = g_settings_get_int (settings, "gui_type_text");
+  options.data.gui_type_images = g_settings_get_int (settings, "gui_type_images");
 #else
   options.data.width = options.data.height = -1;
   options.data.gui_type_width = options.data.gui_type_height = 0;
+  options.data.gui_type_box = options.data.gui_type_layout = 5;
+  options.data.gui_type_text = options.data.gui_type_images = 2;
 #endif
   options.data.use_posx = FALSE;
   options.data.posx = 0;
