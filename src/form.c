@@ -910,7 +910,7 @@ form_create_widget (GtkWidget * dlg)
           /* add field label */
           l = NULL;
           if (fld->type != YAD_FIELD_CHECK && fld->type != YAD_FIELD_BUTTON &&
-              fld->type != YAD_FIELD_CHECK && fld->type != YAD_FIELD_CENTER_BUTTON &&
+              fld->type != YAD_FIELD_DISABLE_CHECK && fld->type != YAD_FIELD_BUTTON &&
               fld->type != YAD_FIELD_FULL_BUTTON && fld->type != YAD_FIELD_LINK &&
               fld->type != YAD_FIELD_CENTER_FULL_BUTTON && fld->type != YAD_FIELD_LINK &&
               fld->type != YAD_FIELD_LABEL && fld->type != YAD_FIELD_TEXT)
