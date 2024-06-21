@@ -1283,6 +1283,8 @@ form_create_widget (GtkWidget * dlg)
                 gtk_widget_set_halign (l, options.common_data.align);
               if (options.form_data.align_buttons && fld->type == YAD_FIELD_FULL_BUTTON)
                 gtk_widget_set_halign (l, options.common_data.align);
+              if (fld->type == YAD_FIELD_CENTER_BUTTON || fld->type == YAD_FIELD_CENTER_FULL_BUTTON)
+                gtk_widget_set_halign (l, GTK_ALIGN_CENTER);
               if (fld->type == YAD_FIELD_BUTTON || fld->type == YAD_FIELD_CENTER_BUTTON)
                 gtk_button_set_relief (GTK_BUTTON (e), GTK_RELIEF_NONE);
               gtk_grid_attach (GTK_GRID (tbl), e, col * 2, row, 2, 1);
