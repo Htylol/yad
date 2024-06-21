@@ -1806,7 +1806,7 @@ yad_options_init (void)
   options.data.window_type = YAD_WINDOW_UNSET;
   options.data.gui_type = YAD_GUI_UNSET;
   options.data.image_halign = GTK_ALIGN_CENTER;
-  options.data.image_valign = GTK_ALIGN_START;
+  options.data.image_valign = GTK_ALIGN_CENTER;
   options.data.focus = TRUE;
   options.data.close_on_unfocus = FALSE;
 
