@@ -1,4 +1,4 @@
-AC_INIT([YAD], [13.0], [https://github.com/v1cont/yad/issues/], yad, [https://github.com/v1cont/yad/])
+AC_INIT([YAD], [14.0], [https://github.com/v1cont/yad/issues/], yad, [https://github.com/v1cont/yad/])
 AC_CONFIG_AUX_DIR([build])
 
 AM_INIT_AUTOMAKE([1.11 foreign dist-xz no-dist-gzip])
@@ -34,7 +34,10 @@ AC_ARG_ENABLE([html],
 			[Build YAD with HTML widget])],
 	[build_html=$enableval], [build_html=yes])
 if test x$build_html = xyes; then
-    PKG_CHECK_MODULES([HTML], [webkit2gtk-4.0], [have_html=yes], [have_html=no])
+    PKG_CHECK_MODULES([HTML], [webkit2gtk-4.1], [have_html=yes], [have_html=no])
+    if test x$have_html=no; then
+        PKG_CHECK_MODULES([HTML], [webkit2gtk-4.0], [have_html=yes], [have_html=no])
+    fi
 else
     have_html=no
 fi
@@ -100,6 +103,16 @@ AM_CONDITIONAL([STANDALONE], [test x$build_sa = xyes])
 
 if test x$build_sa = xyes; then
     AC_DEFINE([STANDALONE], [1], [Define this if you need standalone YAD binary])
+fi
+
+dnl deprecated options
+AC_ARG_ENABLE([deprecated],
+	[AS_HELP_STRING([--enable-deprecated],
+			[Build YAD with deprecated options])],
+	[build_depr=$enableval], [build_depr=yes])
+
+if test x$build_depr = xyes; then
+    AC_DEFINE([DEPRECATED], [1], [Define this if you need to build YAD with deprecated options])
 fi
 
 dnl tools
@@ -170,6 +183,7 @@ echo "  GtkSourceView        - $have_sourceview"
 echo "  Spell checking       - $have_spell"
 echo "  Path to rgb.txt      - $with_rgb"
 echo "  Standalone build     - $build_sa"
+echo "  Deprecated options   - $build_depr"
 echo "  Tools                - $build_tools"
 echo "  Icon browser         - $build_ib"
 echo

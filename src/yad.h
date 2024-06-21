@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with YAD. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2008-2023, Victor Ananjevsky <victor@sanana.kiev.ua>
+ * Copyright (C) 2008-2024, Victor Ananjevsky <victor@sanana.kiev.ua>
  */
 
 #ifndef _YAD_H_
@@ -26,6 +26,7 @@
 #include <sys/stat.h>
 #include <sys/ipc.h>
 #include <fcntl.h>
+#include <errno.h>
 
 #include <gdk/gdkx.h>
 
@@ -196,13 +197,6 @@ typedef enum {
 } YadBoolFormat;
 
 typedef enum {
-  YAD_WINDOW_UNSET = 0,
-  YAD_WINDOW_NORMAL,
-  YAD_WINDOW_DIALOG,
-  YAD_WINDOW_SPLASH,
-} YadWindowType;
-
-typedef enum {
   YAD_GUI_UNSET = 0,
   YAD_GUI_START,
   YAD_GUI_START_OLD,
@@ -287,6 +281,7 @@ typedef struct {
   gchar *interp;
   gchar *uri_handler;
   gchar *f1_action;
+  gchar *workdir;
   /* window settings */
   gboolean sticky;
   gboolean fixed;
@@ -297,8 +292,10 @@ typedef struct {
   gboolean skip_taskbar;
   gboolean maximized;
   gboolean fullscreen;
+#ifdef DEPRECATED
   gboolean splash;
-  YadWindowType window_type;
+#endif
+  GdkWindowTypeHint window_type;
   YadGuiType gui_type;
   GtkAlign image_halign;
   GtkAlign image_valign;
@@ -621,7 +618,9 @@ typedef struct {
 #endif
 
   gchar *css;
+#ifdef DEPRECATED
   gchar *gtkrc_file;
+#endif
 
   GtkPolicyType hscroll_policy;
   GtkPolicyType vscroll_policy;
@@ -760,7 +759,7 @@ gchar **split_arg (const gchar *str);
 
 YadNTabs *get_tabs (key_t key, gboolean create);
 
-gboolean stock_lookup (gchar *key, YadStock *it);
+gboolean stock_lookup (const gchar *key, YadStock *it);
 
 GtkWidget *get_label (gchar *str, guint border, GtkWidget *w);
 

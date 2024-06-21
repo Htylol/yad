@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with YAD. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2008-2023, Victor Ananjevsky <victor@sanana.kiev.ua>
+ * Copyright (C) 2008-2024, Victor Ananjevsky <victor@sanana.kiev.ua>
  */
 
 #include <sys/types.h>
@@ -482,19 +482,12 @@ create_dialog (void)
 
   /* create dialog window */
   dlg = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  switch (options.data.window_type)
-    {
-      case YAD_WINDOW_UNSET:
-      case YAD_WINDOW_NORMAL:
-        gtk_window_set_type_hint (GTK_WINDOW (dlg), GDK_WINDOW_TYPE_HINT_NORMAL);
-        break;
-      case YAD_WINDOW_DIALOG:
-        gtk_window_set_type_hint (GTK_WINDOW (dlg), GDK_WINDOW_TYPE_HINT_DIALOG);
-        break;
-      case YAD_WINDOW_SPLASH:
-        gtk_window_set_type_hint (GTK_WINDOW (dlg), GDK_WINDOW_TYPE_HINT_SPLASHSCREEN);
-        break;
-    }
+
+#ifdef DEPRECATED
+  if (options.data.splash)
+    options.data.window_type = GDK_WINDOW_TYPE_HINT_SPLASHSCREEN;
+#endif
+  gtk_window_set_type_hint (GTK_WINDOW (dlg), options.data.window_type);
   gtk_window_set_title (GTK_WINDOW (dlg), options.data.dialog_title);
   gtk_widget_set_name (dlg, "yad-dialog-window");
 
@@ -869,16 +862,23 @@ main (gint argc, gchar ** argv)
       return -1;
     }
 
+#ifdef DEPRECATED
   if (options.data.splash)
     {
-      g_warning(_("Use of deprecated option --splash, use --window-type=splash instead"));
-      if (options.data.window_type == YAD_WINDOW_UNSET)
-        options.data.window_type = YAD_WINDOW_SPLASH;
-      else
-       g_warning(_("Both --splash and --window-type are specified, ignoring --splash"));
+      if (options.debug)
+        g_printerr(_("WARNING: Using splash option is deprecated, please use --window-type instead"));
     }
+#endif
 
   yad_set_mode ();
+
+  /* set working directory */
+  if (options.data.workdir)
+    {
+      if (g_chdir (options.data.workdir) != 0)
+        g_printerr (_("Unable to change directory to %s: %s\n"),
+                    options.data.workdir, strerror (errno));
+    }
 
   /* check for current GDK backend */
 #ifdef GDK_WINDOWING_X11
@@ -899,6 +899,7 @@ main (gint argc, gchar ** argv)
                                                  GTK_STYLE_PROVIDER_PRIORITY_USER);
       g_object_unref (css);
     }
+#ifdef DEPRECATED
   else if (options.gtkrc_file)
     {
       GtkCssProvider *css = gtk_css_provider_new ();
@@ -911,6 +912,7 @@ main (gint argc, gchar ** argv)
                                                  GTK_STYLE_PROVIDER_PRIORITY_USER);
       g_object_unref (css);
     }
+#endif
 
   /* set default icons and icon theme */
   if (options.data.icon_theme)

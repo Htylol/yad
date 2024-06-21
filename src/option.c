@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with YAD. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2008-2023, Victor Ananjevsky <victor@sanana.kiev.ua>
+ * Copyright (C) 2008-2024, Victor Ananjevsky <victor@sanana.kiev.ua>
  */
 
 #include <stdlib.h>
@@ -164,6 +164,8 @@ static GOptionEntry general_options[] = {
     N_("Set URI handler"), N_("CMD") },
   { "f1-action", 0, 0, G_OPTION_ARG_STRING, &options.data.f1_action,
     N_("Set command running when F1 was pressed"), N_("CMD") },
+  { "workdir", 0, 0, G_OPTION_ARG_STRING, &options.data.workdir,
+    N_("Set working directory"), N_("PATH") },
   /* window settings */
   { "sticky", 0, 0, G_OPTION_ARG_NONE, &options.data.sticky,
     N_("Set window sticky"), NULL },
@@ -187,10 +189,12 @@ static GOptionEntry general_options[] = {
     N_("Don't focus dialog window"), NULL },
   { "close-on-unfocus", 0, 0, G_OPTION_ARG_NONE, &options.data.close_on_unfocus,
     N_("Close window when it sets unfocused"), NULL },
+#ifdef DEPRECATED
   { "splash", 0, 0, G_OPTION_ARG_NONE, &options.data.splash,
-    N_("Open window as a splashscreen (DEPRECATED: use --window-type=splash instead)"), NULL },
+    N_("Open window as a splashscreen (Deprecated, see man page for details)"), NULL },
+#endif
   { "window-type", 0, 0, G_OPTION_ARG_CALLBACK, set_window_type,
-    N_("Specify the window type for the dialog"), N_("normal|dialog|splash") },
+    N_("Specify the window type for the dialog"), N_("TYPE") },
   { "gui-type", 0, 0, G_OPTION_ARG_CALLBACK, set_gui_type,
     N_("Specify the gui type"), N_("start|start-old|settings-{paned,noteboke,shortcut,base}") },
   { "image-halign", 0, 0, G_OPTION_ARG_CALLBACK, set_image_halign,
@@ -791,8 +795,10 @@ static GOptionEntry misc_options[] = {
     N_("Print version"), NULL },
   { "css", 0, 0, G_OPTION_ARG_STRING, &options.css,
     N_("Load additional CSS settings from file or string"), N_("STRING") },
+#ifdef DEPRECATED
   { "gtkrc", 0, 0, G_OPTION_ARG_FILENAME, &options.gtkrc_file,
     N_("Load additional CSS settings from file"), N_("FILENAME") },
+#endif
   { "hscroll-policy", 0, 0, G_OPTION_ARG_CALLBACK, set_scroll_policy,
     N_("Set policy for horizontal scrollbars (auto, always, never)"), N_("TYPE") },
   { "vscroll-policy", 0, 0, G_OPTION_ARG_CALLBACK, set_scroll_policy,
@@ -1087,11 +1093,11 @@ add_file_filter (const gchar * option_name, const gchar * value, gpointer data, 
       for (i = 0; value[i] != '\0'; i++)
         {
           if (value[i] == '|')
-            break;
+            {
+              name = g_strstrip (g_strndup (value, i));
+              break;
+            }
         }
-
-      if (value[i] == '|')
-        name = g_strstrip (g_strndup (value, i));
 
       if (name)
         {
@@ -1444,21 +1450,6 @@ set_interp (const gchar * option_name, const gchar * value, gpointer data, GErro
 }
 
 static gboolean
-set_window_type (const gchar * option_name, const gchar * value, gpointer data, GError ** err)
-{
-  if (strcasecmp (value, "normal") == 0)
-    options.data.window_type = YAD_WINDOW_NORMAL;
-  else if (strcasecmp (value, "dialog") == 0)
-    options.data.window_type = YAD_WINDOW_DIALOG;
-  else if (strcasecmp (value, "splash") == 0)
-    options.data.window_type = YAD_WINDOW_SPLASH;
-  else
-    g_printerr (_("Unknown window type: %s\n"), value);
-
-  return TRUE;
-}
-
-static gboolean
 set_gui_type (const gchar * option_name, const gchar * value, gpointer data, GError ** err)
 {
   if (strcasecmp (value, "start") == 0)
@@ -1513,6 +1504,31 @@ set_image_valign (const gchar * option_name, const gchar * value, gpointer data,
     options.data.image_valign = GTK_ALIGN_BASELINE;
   else
     g_printerr (_("Unknown image valign type: %s\n"), value);
+
+  return TRUE;
+}
+
+static gboolean
+set_window_type (const gchar * option_name, const gchar * value, gpointer data, GError ** err)
+{
+  if (strcasecmp (value, "normal") == 0)
+    options.data.window_type = GDK_WINDOW_TYPE_HINT_NORMAL;
+  else if (strcasecmp (value, "dialog") == 0)
+    options.data.window_type = GDK_WINDOW_TYPE_HINT_DIALOG;
+  else if (strcasecmp (value, "utility") == 0)
+    options.data.window_type = GDK_WINDOW_TYPE_HINT_UTILITY;
+  else if (strcasecmp (value, "dock") == 0)
+    options.data.window_type = GDK_WINDOW_TYPE_HINT_DOCK;
+  else if (strcasecmp (value, "desktop") == 0)
+    options.data.window_type = GDK_WINDOW_TYPE_HINT_DESKTOP;
+  else if (strcasecmp (value, "tooltip") == 0)
+    options.data.window_type = GDK_WINDOW_TYPE_HINT_TOOLTIP;
+  else if (strcasecmp (value, "notification") == 0)
+    options.data.window_type = GDK_WINDOW_TYPE_HINT_NOTIFICATION;
+  else if (strcasecmp (value, "splash") == 0)
+    options.data.window_type = GDK_WINDOW_TYPE_HINT_SPLASHSCREEN;
+  else
+    g_printerr (_("Unknown window type: %s\n"), value);
 
   return TRUE;
 }
@@ -1716,7 +1732,9 @@ yad_options_init (void)
   options.rest_file = NULL;
   options.extra_data = NULL;
   options.css = NULL;
+#ifdef DEPRECATED
   options.gtkrc_file = NULL;
+#endif
 #ifndef G_OS_WIN32
   options.kill_parent = 0;
   options.print_xid = FALSE;
@@ -1791,6 +1809,7 @@ yad_options_init (void)
   options.data.uri_handler = OPEN_CMD;
 #endif
   options.data.f1_action = NULL;
+  options.data.workdir = NULL;
 
   /* Initialize window options */
   options.data.sticky = FALSE;
@@ -1802,8 +1821,10 @@ yad_options_init (void)
   options.data.skip_taskbar = FALSE;
   options.data.maximized = FALSE;
   options.data.fullscreen = FALSE;
+#ifdef DEPRECATED
   options.data.splash = FALSE;
-  options.data.window_type = YAD_WINDOW_UNSET;
+#endif
+  options.data.window_type = GDK_WINDOW_TYPE_HINT_NORMAL;
   options.data.gui_type = YAD_GUI_UNSET;
   options.data.image_halign = GTK_ALIGN_CENTER;
   options.data.image_valign = GTK_ALIGN_CENTER;
