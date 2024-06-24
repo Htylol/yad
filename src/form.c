@@ -86,6 +86,7 @@ expand_action (gchar * cmd)
                   }
                 case YAD_FIELD_CHECK:
                 case YAD_FIELD_DISABLE_CHECK:
+                case YAD_FIELD_FULL_DISABLE_CHECK:
                   arg = g_strdup (print_bool_val (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (g_slist_nth_data (fields, num)))));
                   break;
                 case YAD_FIELD_COMBO:
@@ -98,6 +99,7 @@ expand_action (gchar * cmd)
                   break;
                 case YAD_FIELD_SWITCH:
                 case YAD_FIELD_DISABLE_SWITCH:
+                case YAD_FIELD_FULL_DISABLE_SWITCH:
                   arg = g_strdup (print_bool_val (gtk_switch_get_state (GTK_SWITCH (g_slist_nth_data (fields, num)))));
                   break;
                 case YAD_FIELD_SCALE:
@@ -247,10 +249,12 @@ set_field_value (guint num, gchar *value)
       break;
 
     case YAD_FIELD_CHECK:
+    case YAD_FIELD_FULL_DISABLE_CHECK:
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (w), get_bool_val (value));
       break;
 
     case YAD_FIELD_SWITCH:
+    case YAD_FIELD_FULL_DISABLE_SWITCH:
       gtk_switch_set_state (GTK_SWITCH (w), get_bool_val (value));
       break;
 
@@ -911,6 +915,7 @@ form_create_widget (GtkWidget * dlg)
           l = NULL;
           if (fld->type != YAD_FIELD_CHECK && fld->type != YAD_FIELD_BUTTON &&
               fld->type != YAD_FIELD_DISABLE_CHECK && fld->type != YAD_FIELD_BUTTON &&
+              fld->type != YAD_FIELD_FULL_DISABLE_CHECK && fld->type != YAD_FIELD_BUTTON &&
               fld->type != YAD_FIELD_FULL_BUTTON && fld->type != YAD_FIELD_LINK &&
               fld->type != YAD_FIELD_CENTER_FULL_BUTTON && fld->type != YAD_FIELD_LINK &&
               fld->type != YAD_FIELD_LABEL && fld->type != YAD_FIELD_TEXT)
@@ -1052,6 +1057,50 @@ form_create_widget (GtkWidget * dlg)
                 gtk_widget_set_halign (e, GTK_ALIGN_START); /* prevent expanding widget (make it always compact) */
                 gtk_label_set_mnemonic_widget (GTK_LABEL (l), e);
                 fields = g_slist_append (fields, e);
+                g_signal_connect_after (G_OBJECT (e), "notify::active", G_CALLBACK (switch_changed_cb), GINT_TO_POINTER (i));
+              }
+              break;
+
+            case YAD_FIELD_FULL_DISABLE_CHECK:
+              {
+                gchar *buf;
+                if (fld->name)
+                  buf = g_strcompress (fld->name);
+                else
+                  buf = g_strdup ("");
+                e = gtk_check_button_new_with_label (buf);
+                gtk_widget_set_name (e, "yad-form-check");
+                if (fld->tip)
+                  {
+                    if (!options.data.no_markup)
+                      gtk_widget_set_tooltip_markup (e, fld->tip);
+                    else
+                      gtk_widget_set_tooltip_text (e, fld->tip);
+                  }
+                gtk_grid_attach (GTK_GRID (tbl), e, col * 2, row, 2, 1);
+                gtk_widget_set_hexpand (e, TRUE);
+                gtk_widget_set_sensitive (e, FALSE);
+                g_free (buf);
+                g_signal_connect_after (G_OBJECT (e), "toggled", G_CALLBACK (field_changed_cb), GINT_TO_POINTER (i));
+              }
+              break;
+
+            case YAD_FIELD_FULL_DISABLE_SWITCH:
+              {
+                e = gtk_switch_new ();
+                gtk_widget_set_name (e, "yad-form-switch");
+                if (fld->tip)
+                  {
+                    if (!options.data.no_markup)
+                      gtk_widget_set_tooltip_markup (e, fld->tip);
+                    else
+                      gtk_widget_set_tooltip_text (e, fld->tip);
+                  }
+                gtk_grid_attach (GTK_GRID (tbl), e, 1 + col * 2, row, 1, 1);
+                gtk_widget_set_hexpand (e, TRUE);
+                gtk_widget_set_halign (e, GTK_ALIGN_START); /* prevent expanding widget (make it always compact) */
+                gtk_label_set_mnemonic_widget (GTK_LABEL (l), e);
+                gtk_widget_set_sensitive (e, FALSE);
                 g_signal_connect_after (G_OBJECT (e), "notify::active", G_CALLBACK (switch_changed_cb), GINT_TO_POINTER (i));
               }
               break;
@@ -1482,6 +1531,7 @@ form_print_field (guint fn)
       }
     case YAD_FIELD_CHECK:
     case YAD_FIELD_DISABLE_CHECK:
+    case YAD_FIELD_FULL_DISABLE_CHECK:
       if (options.common_data.quoted_output)
         g_printf ("'%s'%s", print_bool_val (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (g_slist_nth_data (fields, fn)))),
                   options.common_data.separator);
@@ -1491,6 +1541,7 @@ form_print_field (guint fn)
       break;
     case YAD_FIELD_SWITCH:
     case YAD_FIELD_DISABLE_SWITCH:
+    case YAD_FIELD_FULL_DISABLE_SWITCH:
       if (options.common_data.quoted_output)
         g_printf ("'%s'%s", print_bool_val (gtk_switch_get_state (GTK_SWITCH (g_slist_nth_data (fields, fn)))),
                   options.common_data.separator);
