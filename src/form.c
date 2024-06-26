@@ -79,6 +79,7 @@ expand_action (gchar * cmd)
                   g_free (buf);
                   break;
                 case YAD_FIELD_NUM:
+                case YAD_FIELD_DISABLE_NUM:
                   {
                     guint prec = gtk_spin_button_get_digits (GTK_SPIN_BUTTON (g_slist_nth_data (fields, num)));
                     arg = g_strdup_printf ("%.*f", prec, gtk_spin_button_get_value (GTK_SPIN_BUTTON (g_slist_nth_data (fields, num))));
@@ -212,6 +213,44 @@ set_field_value (guint num, gchar *value)
       break;
 
     case YAD_FIELD_NUM:
+      s = g_strsplit (value, options.common_data.item_separator, -1);
+      if (s[0])
+        {
+          gdouble val = g_ascii_strtod (s[0], NULL);
+          w = g_slist_nth_data (fields, num);
+          if (s[1])
+            {
+              gchar **s1 = g_strsplit (s[1], "..", 2);
+              if (s1[0] && s1[1])
+                {
+                  gdouble min, max;
+                  min = g_ascii_strtod (s1[0], NULL);
+                  max = g_ascii_strtod (s1[1], NULL);
+                  if (min < max)
+                    gtk_spin_button_set_range (GTK_SPIN_BUTTON (w), min, max);
+                }
+              g_strfreev (s1);
+              if (s[2])
+                {
+                  gdouble step = g_ascii_strtod (s[2], NULL);
+                  gtk_spin_button_set_increments (GTK_SPIN_BUTTON (w), step, step * 10);
+                  if (s[3])
+                    {
+                      guint prec = (guint) g_ascii_strtoull (s[3], NULL, 0);
+                      if (prec > 20)
+                        prec = 20;
+                      gtk_spin_button_set_digits (GTK_SPIN_BUTTON (w), prec);
+                    }
+                }
+            }
+          /* set initial value must be after setting range and step */
+          gtk_spin_button_set_value (GTK_SPIN_BUTTON (w), val);
+        }
+      g_strfreev (s);
+      break;
+
+    case YAD_FIELD_DISABLE_NUM:
+      gtk_widget_set_sensitive (w, FALSE);
       s = g_strsplit (value, options.common_data.item_separator, -1);
       if (s[0])
         {
@@ -999,6 +1038,7 @@ form_create_widget (GtkWidget * dlg)
               break;
 
             case YAD_FIELD_NUM:
+            case YAD_FIELD_DISABLE_NUM:
               e = gtk_spin_button_new_with_range (0.0, 65525.0, 1.0);
               gtk_widget_set_name (e, "yad-form-spin");
               if (fld->tip)
@@ -1519,6 +1559,7 @@ form_print_field (guint fn)
                   options.common_data.separator);
       break;
     case YAD_FIELD_NUM:
+    case YAD_FIELD_DISABLE_NUM:
       {
         guint prec = gtk_spin_button_get_digits (GTK_SPIN_BUTTON (g_slist_nth_data (fields, fn)));
         if (options.common_data.quoted_output)
