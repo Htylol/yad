@@ -414,10 +414,14 @@ static GOptionEntry form_options[] = {
     N_("Set alignment of filed labels (left, center or right)"), N_("TYPE") },
   { "columns", 0, 0, G_OPTION_ARG_INT, &options.form_data.columns,
     N_("Set number of columns in form"), N_("NUMBER") },
+  { "spacing-row", 0, 0, G_OPTION_ARG_INT, &options.form_data.spacing_row,
+    N_("Spacing row"), N_("NUMBER") },
+  { "spacing-column", 0, 0, G_OPTION_ARG_INT, &options.form_data.spacing_column,
+    N_("Spacing column"), N_("NUMBER") },
   { "homogeneous-row", 0, 0, G_OPTION_ARG_NONE, &options.form_data.homogeneous_row,
-    N_("Make form fields height and columns width the same size"), NULL },
+    N_("Homogeneous row"), NULL },
   { "homogeneous-column", 0, 0, G_OPTION_ARG_NONE, &options.form_data.homogeneous_column,
-    N_("Make form fields height and columns width the same size"), NULL },
+    N_("Homogeneous column"), NULL },
   { "output-by-row", 0, 0, G_OPTION_ARG_NONE, &options.form_data.output_by_row,
     N_("Order output fields by rows"), NULL },
   { "focus-field", 0, 0, G_OPTION_ARG_INT, &options.form_data.focus_field,
@@ -922,8 +926,12 @@ add_field (const gchar * option_name, const gchar * value, gpointer data, GError
         fld->type = YAD_FIELD_READ_ONLY;
       else if (strcasecmp (fstr[1], "NUM") == 0)
         fld->type = YAD_FIELD_NUM;
+      else if (strcasecmp (fstr[1], "NUMN") == 0)
+        fld->type = YAD_FIELD_NUM_NEW;
       else if (strcasecmp (fstr[1], "DNUM") == 0)
         fld->type = YAD_FIELD_DISABLE_NUM;
+      else if (strcasecmp (fstr[1], "DNUMN") == 0)
+        fld->type = YAD_FIELD_DISABLE_NUM_NEW;
       else if (strcasecmp (fstr[1], "CB") == 0)
         fld->type = YAD_FIELD_COMBO;
       else if (strcasecmp (fstr[1], "CBE") == 0)
@@ -1949,6 +1957,8 @@ yad_options_init (void)
   options.form_data.cycle_read = FALSE;
   options.form_data.align_buttons = FALSE;
   options.form_data.changed_action = NULL;
+  options.form_data.spacing_row = 5;
+  options.form_data.spacing_column = 5;
   options.form_data.homogeneous_row = FALSE;
   options.form_data.homogeneous_column = FALSE;
 

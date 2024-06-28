@@ -111,7 +111,9 @@ typedef enum {
   YAD_FIELD_READ_ONLY,
   YAD_FIELD_COMPLETE,
   YAD_FIELD_NUM,
+  YAD_FIELD_NUM_NEW,
   YAD_FIELD_DISABLE_NUM,
+  YAD_FIELD_DISABLE_NUM_NEW,
   YAD_FIELD_CHECK,
   YAD_FIELD_SWITCH,
   YAD_FIELD_DISABLE_CHECK,
@@ -382,6 +384,8 @@ typedef struct {
   gboolean cycle_read;
   gboolean align_buttons;
   gchar *changed_action;
+  guint spacing_row;
+  guint spacing_column;
   gboolean homogeneous_row;
   gboolean homogeneous_column;
 } YadFormData;

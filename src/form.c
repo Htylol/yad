@@ -79,7 +79,9 @@ expand_action (gchar * cmd)
                   g_free (buf);
                   break;
                 case YAD_FIELD_NUM:
+                case YAD_FIELD_NUM_NEW:
                 case YAD_FIELD_DISABLE_NUM:
+                case YAD_FIELD_DISABLE_NUM_NEW:
                   {
                     guint prec = gtk_spin_button_get_digits (GTK_SPIN_BUTTON (g_slist_nth_data (fields, num)));
                     arg = g_strdup_printf ("%.*f", prec, gtk_spin_button_get_value (GTK_SPIN_BUTTON (g_slist_nth_data (fields, num))));
@@ -213,6 +215,7 @@ set_field_value (guint num, gchar *value)
       break;
 
     case YAD_FIELD_NUM:
+    case YAD_FIELD_NUM_NEW:
       s = g_strsplit (value, options.common_data.item_separator, -1);
       if (s[0])
         {
@@ -250,6 +253,7 @@ set_field_value (guint num, gchar *value)
       break;
 
     case YAD_FIELD_DISABLE_NUM:
+    case YAD_FIELD_DISABLE_NUM_NEW:
       gtk_widget_set_sensitive (w, FALSE);
       s = g_strsplit (value, options.common_data.item_separator, -1);
       if (s[0])
@@ -928,8 +932,8 @@ form_create_widget (GtkWidget * dlg)
         rows++;
 
       tbl = gtk_grid_new ();
-      gtk_grid_set_row_spacing (GTK_GRID (tbl), 5);
-      gtk_grid_set_column_spacing (GTK_GRID (tbl), 5);
+      gtk_grid_set_row_spacing (GTK_GRID (tbl), options.form_data.spacing_row);
+      gtk_grid_set_column_spacing (GTK_GRID (tbl), options.form_data.spacing_column);
 
       gtk_grid_set_row_homogeneous (GTK_GRID (tbl), options.form_data.homogeneous_row);
       gtk_grid_set_column_homogeneous (GTK_GRID (tbl), options.form_data.homogeneous_column);
@@ -1048,7 +1052,25 @@ form_create_widget (GtkWidget * dlg)
                   else
                     gtk_widget_set_tooltip_text (e, fld->tip);
                 }
-              gtk_entry_set_alignment (GTK_ENTRY (e), 1.0);
+              gtk_entry_set_alignment (GTK_ENTRY (e), 0);
+              gtk_grid_attach (GTK_GRID (tbl), e, 1 + col * 2, row, 1, 1);
+              gtk_widget_set_hexpand (e, TRUE);
+              gtk_label_set_mnemonic_widget (GTK_LABEL (l), e);
+              fields = g_slist_append (fields, e);
+              break;
+
+            case YAD_FIELD_NUM_NEW:
+            case YAD_FIELD_DISABLE_NUM_NEW:
+              e = gtk_spin_button_new_with_range (0.0, 65525.0, 0.1);
+              gtk_widget_set_name (e, "yad-form-spin");
+              if (fld->tip)
+                {
+                  if (!options.data.no_markup)
+                    gtk_widget_set_tooltip_markup (e, fld->tip);
+                  else
+                    gtk_widget_set_tooltip_text (e, fld->tip);
+                }
+              gtk_entry_set_alignment (GTK_ENTRY (e), 0);
               gtk_grid_attach (GTK_GRID (tbl), e, 1 + col * 2, row, 1, 1);
               gtk_widget_set_hexpand (e, TRUE);
               gtk_label_set_mnemonic_widget (GTK_LABEL (l), e);
@@ -1559,7 +1581,9 @@ form_print_field (guint fn)
                   options.common_data.separator);
       break;
     case YAD_FIELD_NUM:
+    case YAD_FIELD_NUM_NEW:
     case YAD_FIELD_DISABLE_NUM:
+    case YAD_FIELD_DISABLE_NUM_NEW:
       {
         guint prec = gtk_spin_button_get_digits (GTK_SPIN_BUTTON (g_slist_nth_data (fields, fn)));
         if (options.common_data.quoted_output)
