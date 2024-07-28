@@ -974,10 +974,6 @@ add_field (const gchar * option_name, const gchar * value, gpointer data, GError
         fld->type = YAD_FIELD_DISABLE_CHECK;
       else if (strcasecmp (fstr[1], "DSW") == 0)
         fld->type = YAD_FIELD_DISABLE_SWITCH;
-      else if (strcasecmp (fstr[1], "FDCHK") == 0)
-        fld->type = YAD_FIELD_FULL_DISABLE_CHECK;
-      else if (strcasecmp (fstr[1], "FDSW") == 0)
-        fld->type = YAD_FIELD_FULL_DISABLE_SWITCH;
       else if (strcasecmp (fstr[1], "BTN") == 0)
         fld->type = YAD_FIELD_BUTTON;
       else if (strcasecmp (fstr[1], "FBTN") == 0)
@@ -990,6 +986,8 @@ add_field (const gchar * option_name, const gchar * value, gpointer data, GError
         fld->type = YAD_FIELD_LINK;
       else if (strcasecmp (fstr[1], "LBL") == 0)
         fld->type = YAD_FIELD_LABEL;
+      else if (strcasecmp (fstr[1], "LBLH") == 0)
+        fld->type = YAD_FIELD_LABEL_HIDE;
       else if (strcasecmp (fstr[1], "TXT") == 0)
         fld->type = YAD_FIELD_TEXT;
       else
