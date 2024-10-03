@@ -384,6 +384,7 @@ set_field_value (guint num, gchar *value)
     case YAD_FIELD_FULL_BUTTON:
     case YAD_FIELD_CENTER_BUTTON:
     case YAD_FIELD_CENTER_FULL_BUTTON:
+    case YAD_FIELD_FULL_BUTTON_ROWS:
       g_object_set_data_full (G_OBJECT (w), "cmd", g_strdup (value), g_free);
       break;
 
@@ -889,7 +890,8 @@ form_create_widget (GtkWidget * dlg)
               fld->type != YAD_FIELD_FULL_BUTTON && fld->type != YAD_FIELD_LINK &&
               fld->type != YAD_FIELD_LABEL && fld->type != YAD_FIELD_TEXT &&
               fld->type != YAD_FIELD_DISABLE_CHECK && fld->type != YAD_FIELD_CENTER_BUTTON &&
-              fld->type != YAD_FIELD_CENTER_FULL_BUTTON && fld->type != YAD_FIELD_LABEL_HIDE)
+              fld->type != YAD_FIELD_CENTER_FULL_BUTTON && fld->type != YAD_FIELD_LABEL_HIDE &&
+              fld->type != YAD_FIELD_FULL_BUTTON_ROWS)
             {
               gchar *buf;
 
@@ -1249,6 +1251,7 @@ form_create_widget (GtkWidget * dlg)
             case YAD_FIELD_FULL_BUTTON:
             case YAD_FIELD_CENTER_BUTTON:
             case YAD_FIELD_CENTER_FULL_BUTTON:
+            case YAD_FIELD_FULL_BUTTON_ROWS:
               e = gtk_button_new ();
               gtk_widget_set_name (e, "yad-form-button");
               if (fld->tip)
@@ -1262,7 +1265,8 @@ form_create_widget (GtkWidget * dlg)
               l = get_label (fld->name, 2, e);
               gtk_container_add (GTK_CONTAINER (e), l);
               if (options.form_data.align_buttons
-              && fld->type == YAD_FIELD_BUTTON || fld->type == YAD_FIELD_FULL_BUTTON)
+              && fld->type == YAD_FIELD_BUTTON || fld->type == YAD_FIELD_FULL_BUTTON
+              || fld->type == YAD_FIELD_FULL_BUTTON_ROWS)
                 gtk_widget_set_halign (l, options.common_data.align);
               if (fld->type == YAD_FIELD_CENTER_BUTTON || fld->type == YAD_FIELD_CENTER_FULL_BUTTON)
                 gtk_widget_set_halign (l, GTK_ALIGN_CENTER);
@@ -1395,11 +1399,23 @@ form_create_widget (GtkWidget * dlg)
             }
 
           /* increase row and column */
-          row++;
-          if (row >= rows)
+          if (fld->type == YAD_FIELD_FULL_BUTTON_ROWS)
             {
-              row = 0;
-              col++;
+            col++;
+            if (col >= rows)
+              {
+                col = 0;
+                row++;
+              }
+            }
+            else
+            {
+            row++;
+            if (row >= rows)
+              {
+                row = 0;
+                col++;
+              }
             }
         }
 
@@ -1605,6 +1621,7 @@ form_print_field (guint fn)
     case YAD_FIELD_FULL_BUTTON:
     case YAD_FIELD_CENTER_BUTTON:
     case YAD_FIELD_CENTER_FULL_BUTTON:
+    case YAD_FIELD_FULL_BUTTON_ROWS:
     case YAD_FIELD_LABEL:
     case YAD_FIELD_LABEL_HIDE:
       if (options.common_data.quoted_output)

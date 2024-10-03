@@ -978,6 +978,8 @@ add_field (const gchar * option_name, const gchar * value, gpointer data, GError
         fld->type = YAD_FIELD_BUTTON;
       else if (strcasecmp (fstr[1], "FBTN") == 0)
         fld->type = YAD_FIELD_FULL_BUTTON;
+      else if (strcasecmp (fstr[1], "FBTNR") == 0)
+        fld->type = YAD_FIELD_FULL_BUTTON_ROWS;
       else if (strcasecmp (fstr[1], "CBTN") == 0)
         fld->type = YAD_FIELD_CENTER_BUTTON;
       else if (strcasecmp (fstr[1], "CFBTN") == 0)
