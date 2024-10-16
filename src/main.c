@@ -814,8 +814,15 @@ main (gint argc, gchar ** argv)
   textdomain (GETTEXT_PACKAGE);
 #endif
 
+  gchar *tray_name = "PortProton";
+  for (int i = 1; i < argc; i++) {
+      if (strncmp(argv[i], "--tray-name=", sizeof("--tray-name=") - 1) == 0) {
+          tray_name = argv[i] + strlen("--tray-name=");
+      }
+  }
+
   gtk_init (&argc, &argv);
-  g_set_application_name ("PortProton");
+  g_set_application_name (tray_name);
 
 #ifndef STANDALONE
   settings = g_settings_new ("yad.settings");
